@@ -1,21 +1,18 @@
 package com.example.demo.model;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Room {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column
     private String name;
@@ -29,14 +26,10 @@ public class Room {
     @Column
     private BigDecimal price;
 
-    @Convert(converter = DateRangeListConverter.class)
-    @Column(name = "dates_available", columnDefinition = "int8range")
-    private List<DateRange> datesAvailable = new ArrayList<>();
-
     // for JPA only, no use
     public Room() {
     }
-    public Room(long id, String name, String description, int beds, BigDecimal price) {
+    public Room(String id, String name, String description, int beds, BigDecimal price) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -68,19 +61,11 @@ public class Room {
         this.beds = beds;
     }
 
-    public List<DateRange> getDatesAvailable() {
-        return datesAvailable;
-    }
-
-    public void setDatesAvailable(List<DateRange> datesAvailable) {
-        this.datesAvailable = datesAvailable;
-    }
-
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -90,6 +75,16 @@ public class Room {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    /**
+     * @return true if all fields except id are equal
+     */
+    public boolean equivalent(Room other) {
+        return price.compareTo(other.getPrice()) == 0
+        && other.getName().equals(name)
+        && other.getDescription().equals(description)
+        && other.getBeds() == beds;
     }
 
     @Override
