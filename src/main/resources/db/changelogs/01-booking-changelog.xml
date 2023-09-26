@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.8.xsd">
+
+    <changeSet id="2" author="author">
+        <!-- Create the Booking table -->
+        <createTable tableName="booking">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="room_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Some neat psql magic to ensure no double bookings.-->
+    <changeSet id="3" author="author">
+        <sql>
+            CREATE EXTENSION IF NOT EXISTS btree_gist;
+            ALTER TABLE booking
+                ADD CONSTRAINT no_overlapping_dates
+                EXCLUDE USING gist (room_id with =,
+                       daterange(start_date, end_date, '[]')  with &amp;&amp;);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

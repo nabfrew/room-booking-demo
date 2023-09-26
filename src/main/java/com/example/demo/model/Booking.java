@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import org.hibernate.annotations.Check;
 
 import java.time.LocalDate;
 
@@ -21,12 +22,6 @@ public class Booking {
     @JoinColumn
     private Room room;
 
-    public Booking(LocalDate startDate, LocalDate endDate, Room room) {
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.room = room;
-    }
-
     @Column
     private LocalDate startDate;
 
@@ -36,6 +31,18 @@ public class Booking {
     public Booking() {
     }
 
+    public Booking(LocalDate startDate, LocalDate endDate, Room room) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.room = room;
+    }
+
+    @Check(constraints = "start_date < end_date")
+    private void validRange() {
+        if (startDate == null || endDate == null || startDate.isBefore(endDate)) {
+            throw new IllegalArgumentException("Start date must be before end date.");
+        }
+    }
 
     public LocalDate getEndDate() {
         return endDate;
