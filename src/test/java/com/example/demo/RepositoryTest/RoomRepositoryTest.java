@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.RepositoryTest;
 
 import com.example.demo.model.Booking;
 import com.example.demo.model.Room;

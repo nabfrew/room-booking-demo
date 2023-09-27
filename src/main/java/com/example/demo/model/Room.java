@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 public class Room {
@@ -30,7 +31,11 @@ public class Room {
     public Room() {
     }
     public Room(String id, String name, String description, int beds, BigDecimal price) {
+        this(name, description, beds, price);
         this.id = id;
+    }
+
+    public Room(String name, String description, int beds, BigDecimal price) {
         this.name = name;
         this.description = description;
         this.beds = beds;
@@ -41,24 +46,12 @@ public class Room {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public int getBeds() {
         return beds;
-    }
-
-    public void setBeds(int beds) {
-        this.beds = beds;
     }
 
     public String getId() {
@@ -73,18 +66,32 @@ public class Room {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
     /**
      * @return true if all fields except id are equal
      */
     public boolean equivalent(Room other) {
-        return price.compareTo(other.getPrice()) == 0
+        return price.compareTo(other.getPrice()) == 0 // BigDecimal is pain for equality.
         && other.getName().equals(name)
         && other.getDescription().equals(description)
         && other.getBeds() == beds;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (!(other instanceof Room otherRoom)) {
+            return false;
+        }
+        return id.equals(otherRoom.getId())
+                && equivalent(otherRoom);
+    }
+
+    @Override
+    public int hashCode() {
+        // Strip traililng zeros should ensure numerically equal BigDecimals get equal hash codes.
+        return Objects.hash(price.stripTrailingZeros(), id, beds, name, description);
     }
 
     @Override

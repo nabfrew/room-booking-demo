@@ -7,7 +7,7 @@
     <changeSet id="1" author="author">
         <!-- Create the Room table -->
         <createTable tableName="room">
-            <column name="id" type="UUID">
+            <column name="id" type="VARCHAR(255)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="VARCHAR(255)"/>

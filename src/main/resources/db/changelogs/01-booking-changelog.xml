@@ -7,11 +7,14 @@
     <changeSet id="2" author="author">
         <!-- Create the Booking table -->
         <createTable tableName="booking">
-            <column name="id" type="UUID">
+            <column name="id" type="VARCHAR(255)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="room_id" type="UUID">
-                <constraints nullable="false"/>
+            <column name="room_id" type="VARCHAR(255)">
+                <constraints nullable="false"
+                    foreignKeyName="fk_room_id"
+                    references="Room(id)"
+                    deleteCascade="true"/>
             </column>
             <column name="start_date" type="DATE">
                 <constraints nullable="false"/>

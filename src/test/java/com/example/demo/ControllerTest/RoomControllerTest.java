@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.ControllerTest;
 
 import com.example.demo.model.Booking;
 import com.example.demo.repository.BookingRepository;
@@ -42,7 +42,7 @@ class RoomControllerTest {
     private ObjectMapper objectMapper; // ObjectMapper for JSON parsing
 
     @BeforeEach
-    private void setup() {
+    void setUp() {
         bookingRepository.deleteAll();
         roomRepository.deleteAll();
     }

@@ -10,8 +10,10 @@ import jakarta.persistence.ManyToOne;
 import org.hibernate.annotations.Check;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
+@Check(constraints = "start_date <= end_date")
 public class Booking {
 
     @Id
@@ -25,6 +27,7 @@ public class Booking {
     @Column
     private LocalDate startDate;
 
+    // 'end' is an sql keywords, wreaks havoc if used on without 'Date'.
     @Column
     private LocalDate endDate;
 
@@ -35,13 +38,6 @@ public class Booking {
         this.startDate = startDate;
         this.endDate = endDate;
         this.room = room;
-    }
-
-    @Check(constraints = "start_date < end_date")
-    private void validRange() {
-        if (startDate == null || endDate == null || startDate.isBefore(endDate)) {
-            throw new IllegalArgumentException("Start date must be before end date.");
-        }
     }
 
     public LocalDate getEndDate() {
@@ -66,5 +62,36 @@ public class Booking {
 
     public String getId() {
         return id;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    /**
+     * @return true if start, end, & room match. Id excluded.
+     */
+    public boolean equivalent(Booking other) {
+        return startDate.equals(other.startDate)
+                && endDate.equals(other.endDate)
+                && room.equals(other.getRoom());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (!(other instanceof Booking otherBooking)) {
+            return false;
+        }
+
+        return id.equals(otherBooking.id)
+                && equivalent(otherBooking);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, startDate, endDate, room);
     }
 }
